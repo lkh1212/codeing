@@ -1,4 +1,5 @@
 from django.core.paginator import Paginator
+from django.db.models import Q
 from django.shortcuts import render
 from django.views import View
 from django_request_mapping import request_mapping
@@ -10,18 +11,52 @@ class MyView(View):
 
     @request_mapping("/", method="get")
     def home(self,request):
-        objs = Board.objects.order_by('-board_date').all();
+        request.session['sessionid'] = 'naise1'
+        objs = Board.objects.all();
         context = {
             'objs': objs
         };
-
         return render(request,'home.html',context);
-
-
     # ================================================================
+    @request_mapping("/search", method="get")    #검색
+    def search(self, request):
+        context = [];
+        search_type = request.GET['type']
+        search_word = request.GET['q']
+        board_list = Board.objects.select_related('user');
+        print(search_type, search_word)
+        print(board_list.query)
+        print('----------------')
+
+        if search_word:
+            if len(search_word) > 1:
+                if search_type == 'all':
+                    search_board_list = board_list.filter(
+                        Q(board_title__icontains=search_word) | Q(board_content__icontains=search_word) | Q(
+                            user__user_id__icontains=search_word))
+                elif search_type == 'title_content':
+                    search_board_list = board_list.filter(
+                        Q(board_title__icontains=search_word) | Q(board_content__icontains=search_word))
+                elif search_type == 'title':
+                    search_board_list = board_list.filter(board_title__icontains=search_word)
+                elif search_type == 'content':
+                    search_board_list = board_list.filter(board_content__icontains=search_word)
+                elif search_type == 'writer':
+                    search_board_list = board_list.filter(user__user_id__icontains=search_word)
+                print(search_board_list)
+                print(type(search_board_list))
+                context = {
+                    'search_boards': search_board_list,
+                    'search_term': search_word
+                }
+            else:
+                context = {'message': '검색어는 2글자 이상 입력해주세요.'}
+                # messages.error(self.request, '검색어는 2글자 이상 입력해주세요.')
+        return render(request, 'search_board.html', context);
+
     @request_mapping("/notice/notice", method="get") #공지사항
     def notice(self, request):
-        objs = Board.objects.order_by('-board_date').filter(board='공지');
+        objs = Board.objects.filter(board='공지');
         page = request.GET.get('page','1');
         paginator = Paginator(objs,'10');
         page_obj = paginator.get_page(page);
@@ -40,20 +75,22 @@ class MyView(View):
         title = request.POST['title'];
         text = request.POST['content'];
         try:
+            if request.session['sessionid'] == 'naise1':
+
                 data = Board(board_title=title, board='공지', user_id=request.session['sessionid'], wiki_id='1', board_content=text,
                              board_date=timezone.now());
                 data.save()
                 return render(request, 'notice/postok.html');
+            else:
+                raise Exception;
         except:  # id 값이 없으므로 에러가 남
             return render(request, 'notice/postfail.html');
-
-
 
     # ================================================================
 
     @request_mapping("/info/info", method="get") #정보게시판
     def info(self, request):
-        objs = Board.objects.order_by('-board_date').filter(board='정보');
+        objs = Board.objects.filter(board='정보');
         print(objs)
         page = request.GET.get('page', '1');
         paginator = Paginator(objs, '10');
@@ -80,12 +117,10 @@ class MyView(View):
         except:  # id 값이 없으므로 에러가 남
             return render(request, 'postfail.html');
 
-
-
     # ================================================================
     @request_mapping("/free/free", method="get") #자유게시판
     def free(self, request):
-        objs = Board.objects.order_by('-board_date').filter(board='자유');
+        objs = Board.objects.filter(board='자유');
         print(objs)
         page = request.GET.get('page', '1');
         paginator = Paginator(objs, '10');
@@ -114,12 +149,10 @@ class MyView(View):
         except:  # id 값이 없으므로 에러가 남
             return render(request, 'postfail.html');
 
-
-
     # ================================================================
     @request_mapping("/qna/qna", method="get") #질문게시판
     def qna(self, request):
-        objs = Board.objects.order_by('-board_date').filter(board='질문');
+        objs = Board.objects.filter(board='질문');
         print(objs)
         page = request.GET.get('page', '1');
         paginator = Paginator(objs, '10');
@@ -147,12 +180,10 @@ class MyView(View):
         except:  # id 값이 없으므로 에러가 남
             return render(request, 'postfail.html');
 
-
-
     # ================================================================
     @request_mapping("/project/project", method="get") #프로젝트
     def project(self, request):
-        objs = Board.objects.order_by('-board_date').filter(board='프로젝트');
+        objs = Board.objects.filter(board='프로젝트');
         print(objs)
         page = request.GET.get('page', '1');
         paginator = Paginator(objs, '10');
@@ -188,12 +219,10 @@ class MyView(View):
         except:  # id 값이 없으므로 에러가 남
             return render(request, 'postfail.html');
 
-
-
     # ================================================================
     @request_mapping("/study/study", method="get") #스터디
     def study(self, request):
-        objs = Board.objects.order_by('-board_date').filter(board='스터디');
+        objs = Board.objects.filter(board='스터디');
         print(objs)
         page = request.GET.get('page', '1');
         paginator = Paginator(objs, '10');
@@ -228,8 +257,6 @@ class MyView(View):
             return render(request, 'study/postok.html');
         except:  # id 값이 없으므로 에러가 남
             return render(request, 'postfail.html');
-
-
 
     # ================================================================
     @request_mapping("/post", method="get")
