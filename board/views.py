@@ -2,7 +2,7 @@ from django.core.paginator import Paginator
 from django.shortcuts import render
 from django.views import View
 from django_request_mapping import request_mapping
-from board.models import Board, User, Wiki, Revision
+from board.models import Board, User
 from django.utils import timezone
 
 @request_mapping("")
@@ -16,6 +16,7 @@ class MyView(View):
         };
 
         return render(request,'home.html',context);
+
 
     # ================================================================
     @request_mapping("/notice/notice", method="get") #공지사항
@@ -53,6 +54,7 @@ class MyView(View):
     @request_mapping("/info/info", method="get") #정보게시판
     def info(self, request):
         objs = Board.objects.order_by('-board_date').filter(board='정보');
+        print(objs)
         page = request.GET.get('page', '1');
         paginator = Paginator(objs, '10');
         page_obj = paginator.get_page(page);
@@ -63,23 +65,14 @@ class MyView(View):
 
     @request_mapping("/info/post", method="get")  # 공지사항
     def infopost(self, request):
-        wiki = Wiki.objects.all()
-        objs = [];
-        for i in range(0, len(wiki)):
-            objs.append(wiki[i].wiki_title)
-        context = {
-            'objs': objs
-        }
-        return render(request, 'info/post.html', context);
+        return render(request, 'info/post.html');
 
     @request_mapping("/info/info/p", method="post")  # 공지사항
     def info_post(self, request):
-        wiki_title = request.POST['wiki'];
-        wiki = Wiki.objects.get(wiki_title = wiki_title)
         title = request.POST['title'];
         text = request.POST['content'];
         try:
-                data = Board(board_title=title, board='정보', user_id=request.session['sessionid'], wiki_id=wiki.wiki_id,
+                data = Board(board_title=title, board='정보', user_id=request.session['sessionid'], wiki_id='1',
                              board_content=text,
                              board_date= timezone.now());
                 data.save()
@@ -93,10 +86,10 @@ class MyView(View):
     @request_mapping("/free/free", method="get") #자유게시판
     def free(self, request):
         objs = Board.objects.order_by('-board_date').filter(board='자유');
+        print(objs)
         page = request.GET.get('page', '1');
         paginator = Paginator(objs, '10');
         page_obj = paginator.get_page(page);
-
         context = {
             'objs': page_obj
         };
@@ -104,24 +97,16 @@ class MyView(View):
 
     @request_mapping("/free/post", method="get")  # 공지사항
     def freepost(self, request):
-        wiki = Wiki.objects.all()
-        objs = [];
-        for i in range(0,len(wiki)):
-            objs.append(wiki[i].wiki_title)
-        context = {
-            'objs':objs
-        }
-        return render(request, 'free/post.html', context);
+
+        return render(request, 'free/post.html');
 
     @request_mapping("/free/free/p", method="post")  # 공지사항
     def free_insert(self, request):
         title = request.POST['title'];
         text = request.POST['content'];
         objs = User.objects.all();
-        wiki_title = request.POST['wiki'];
-        wiki = Wiki.objects.get(wiki_title=wiki_title)
         try:
-                data = Board(board_title=title, board='자유', user_id=request.session['sessionid'], wiki_id=wiki.wiki_id,
+                data = Board(board_title=title, board='자유', user_id=request.session['sessionid'], wiki_id='1',
                              board_content=text,
                              board_date=timezone.now());
                 data.save()
@@ -135,7 +120,7 @@ class MyView(View):
     @request_mapping("/qna/qna", method="get") #질문게시판
     def qna(self, request):
         objs = Board.objects.order_by('-board_date').filter(board='질문');
-
+        print(objs)
         page = request.GET.get('page', '1');
         paginator = Paginator(objs, '10');
         page_obj = paginator.get_page(page);
@@ -146,23 +131,15 @@ class MyView(View):
 
     @request_mapping("/qna/post", method="get")  # 공지사항
     def qnapost(self, request):
-        wiki = Wiki.objects.all()
-        objs = [];
-        for i in range(0, len(wiki)):
-            objs.append(wiki[i].wiki_title)
-        context = {
-            'objs': objs
-        }
-        return render(request, 'qna/post.html', context);
+
+        return render(request, 'qna/post.html');
 
     @request_mapping("/qna/qna/p", method="post")  # 질문
     def qna_insert(self, request):
         title = request.POST['title'];
         text = request.POST['content'];
-        wiki_title = request.POST['wiki'];
-        wiki = Wiki.objects.get(wiki_title=wiki_title)
         try:
-            data = Board(board_title=title, board='질문', user_id=request.session['sessionid'], wiki_id=wiki.wiki_id,
+            data = Board(board_title=title, board='질문', user_id=request.session['sessionid'], wiki_id='1',
                          board_content=text,
                          board_date=timezone.now());
             data.save()
@@ -176,7 +153,7 @@ class MyView(View):
     @request_mapping("/project/project", method="get") #프로젝트
     def project(self, request):
         objs = Board.objects.order_by('-board_date').filter(board='프로젝트');
-
+        print(objs)
         page = request.GET.get('page', '1');
         paginator = Paginator(objs, '10');
         page_obj = paginator.get_page(page);
@@ -187,14 +164,8 @@ class MyView(View):
 
     @request_mapping("/project/post", method="get")  #
     def projectpost(self, request):
-        wiki = Wiki.objects.all()
-        objs = [];
-        for i in range(0, len(wiki)):
-            objs.append(wiki[i].wiki_title)
-        context = {
-            'objs': objs
-        }
-        return render(request, 'project/post.html', context);
+
+        return render(request, 'project/post.html');
 
     @request_mapping("/project/project/p", method="post")  # 질문
     def project_insert(self, request):
@@ -206,10 +177,8 @@ class MyView(View):
         time = request.POST['board_time'];
         on_off = request.POST['board_on_off'];
         phone = request.POST['board_phone'];
-        wiki_title = request.POST['wiki'];
-        wiki = Wiki.objects.get(wiki_title=wiki_title)
         try:
-            data = Board(board_title=title, board='프로젝트', user_id=request.session['sessionid'], wiki_id=wiki.wiki_id,
+            data = Board(board_title=title, board='프로젝트', user_id=request.session['sessionid'], wiki_id='1',
                          board_content=content,
                          board_date=timezone.now(),board_num = num, board_place = place,
                          board_recruitdate = recruitdate, board_time = time, board_on_off = on_off,
@@ -225,7 +194,7 @@ class MyView(View):
     @request_mapping("/study/study", method="get") #스터디
     def study(self, request):
         objs = Board.objects.order_by('-board_date').filter(board='스터디');
-
+        print(objs)
         page = request.GET.get('page', '1');
         paginator = Paginator(objs, '10');
         page_obj = paginator.get_page(page);
@@ -236,14 +205,8 @@ class MyView(View):
 
     @request_mapping("/study/post", method="get")  # 스터디로
     def studypost(self, request):
-        wiki = Wiki.objects.all()
-        objs = [];
-        for i in range(0, len(wiki)):
-            objs.append(wiki[i].wiki_title)
-        context = {
-            'objs': objs
-        }
-        return render(request, 'study/post.html', context);
+
+        return render(request, 'study/post.html');
 
     @request_mapping("/study/study/p", method="post")  # 질문
     def study_insert(self, request):
@@ -255,10 +218,8 @@ class MyView(View):
         time = request.POST['board_time'];
         on_off = request.POST['board_on_off'];
         phone = request.POST['board_phone'];
-        wiki_title = request.POST['wiki'];
-        wiki = Wiki.objects.get(wiki_title=wiki_title)
         try:
-            data = Board(board_title=title, board='스터디', user_id=request.session['sessionid'], wiki_id=wiki.wiki_id,
+            data = Board(board_title=title, board='스터디', user_id=request.session['sessionid'], wiki_id='1',
                          board_content=content,
                          board_date=timezone.now(),board_num = num, board_place = place,
                          board_recruitdate = recruitdate, board_time = time, board_on_off = on_off,
@@ -275,44 +236,10 @@ class MyView(View):
     def post(self, request):
         return render(request, 'post.html');
 
-    # ================================================================
     @request_mapping("/wiki/wiki", method="get")
     def wiki(self, request):
         return render(request, 'wiki/wiki.html');
 
-    @request_mapping("/wiki/post", method="get")  # 공지사항
-    def wikipost(self, request):
-        return render(request, 'wiki/post.html');
-
-    @request_mapping("/wiki/wiki/p", method="post")  # 질문
-    def wiki_insert(self, request):
-        title = request.POST['wiki_title'];
-        revititle = request.POST['revi_title'];
-        text = request.POST['content'];
-        revitext = request.POST['revi_content'];
-        kind = request.POST['kind']
-        userid = User.objects.get(user_id = request.session['sessionid'])
-        try:
-            wikiall = Wiki.objects.all();
-            for i in wikiall:
-                if i.wiki_title == title: #제목이 이미 있으면
-                    print(i.wiki_title)
-                    raise Exception; #에러발생
-
-        except:
-            return render(request, 'wiki/postfail.html');
-
-        try:
-            data2 = Revision(revi_title = title, revi_content = revitext, user_id = userid.user_id)
-            data2.save()
-            revi1 = Revision.objects.get(revi_title = title)
-            data = Wiki(wiki_title=title, wiki_kind=kind, wiki_content=text,revi_id = revi1.revi_id);
-            data.save()
-            return render(request, 'wiki/postok.html');
-        except:  # id 값이 없으므로 에러가 남
-            return render(request, 'postfail.html');
-
-    # ================================================================
     @request_mapping("/register", method="get")  # 회원가입
     def register(self, request):
         return render(request, 'register.html');
@@ -355,7 +282,7 @@ class MyView(View):
             if user.user_pwd == user_pwd:
                 request.session['sessionid'] = user.user_id;
                 request.session['sessionname'] = user.user_name;
-                return render(request, 'home.html');
+                return render(request, 'loginok.html');
             else:
                 raise Exception
         except:
