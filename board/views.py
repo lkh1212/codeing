@@ -17,6 +17,41 @@ class MyView(View):
 
         return render(request,'home.html',context);
 
+    # 검색
+    @request_mapping("/search", method="get")
+    def search(self,request):
+        context =[];
+        search_type = request.GET['type']
+        search_word = request.GET['q']
+        board_list = Board.objects.select_related('user');
+        print(search_type, search_word)
+        print(board_list.query)
+        print('----------------')
+
+        if search_word:
+            if len(search_word) > 1 :
+                if search_type == 'all':
+                    search_board_list = board_list.filter(Q (board_title__icontains=search_word) | Q (board_content__icontains=search_word) | Q (user__user_id__icontains=search_word))
+                elif search_type == 'title_content':
+                    search_board_list = board_list.filter(Q (board_title__icontains=search_word) | Q (board_content__icontains=search_word))
+                elif search_type == 'title':
+                    search_board_list = board_list.filter(board_title__icontains=search_word)
+                elif search_type == 'content':
+                    search_board_list = board_list.filter(board_content__icontains=search_word)
+                elif search_type == 'writer':
+                    search_board_list = board_list.filter(user__user_id__icontains=search_word)
+                print(search_board_list)
+                print(type(search_board_list))
+                context={
+                    'search_boards':search_board_list,
+                    'search_term':search_word
+                }
+            else:
+                context={'message':'검색어는 2글자 이상 입력해주세요.'}
+                # messages.error(self.request, '검색어는 2글자 이상 입력해주세요.')
+        return render(request,'search_board.html', context);
+
+
     # ================================================================
     @request_mapping("/notice/notice", method="get") #공지사항
     def notice(self, request):
