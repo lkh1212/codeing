@@ -1,5 +1,7 @@
+<!-- 2220312 코드 추가 스크랩 리스트페이지 추가 -->
+
 <style>
-#codeing_free_nav{
+#codeing_notice_nav{
     background:blue;
     font-weight:bold;
     color:white;
@@ -10,20 +12,18 @@
         <div class="container-fluid">
             <nav>
                 <div class="container">
-                    <table class="table">
+                <table class="table">
                         <thead class="thead-light">
-                        <!-- 2220312 코드 추가 스크랩추가 -->
-                        <tr class="thead"> <th>번호</th><th>제목</th><th>글쓴이</th><th>날짜</th><th>스크랩</th></tr>
+                        <tr class="thead"> <th>번호</th><th>제목</th><th>글쓴이</th><th>날짜</th></tr>
                         </thead>
                         <tbody>
+
                         {% for o in objs %}
-                        {% if o.board == '자유' %}
                         <tr class="text-center">
                             <td scope="row">
                                 <span>{{ o.board_id }}</span>
                             </td>
                             <td>
-                                <!-- 2220312 코드 추가 스크랩추가 -->
                                 <a href="/clip/detail?board_id={{ o.board_id }}" >{{o.board_title}}</a>
                             </td>
                             <td>
@@ -32,20 +32,12 @@
                             <td>
                                 {{o.board_date | date:'Y-m-d H:i'}}
                             </td>
-                            <!-- 2220312 코드 추가 스크랩추가 -->
-                            <td>
-                                <button type="button" class="btn btn-info" onclick="location.href='/notice/scrap?board_id={{ o.board_id }}&type=free'" >스크랩</button>
-                            </td>
                         </tr>
-                        {% endif %}
                         {% endfor %}
                         </tbody>
                     </table>
                     {% if request.session.sessionid == None %}
                     {% else %}
-                    <a href="post" class="btn btn-primary">
-                        글쓰기
-                    </a>
                      {% endif %}
                     </div>
                 <ul class="pagination justify-content-center">
