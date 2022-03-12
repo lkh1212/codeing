@@ -92,6 +92,15 @@ class MyView(View):
             return render(request, 'clip/detail_study_project.html', context)
         else:
             return redirect('/login')
+
+    @request_mapping("/wiki/detail/", method="get")
+    def wiki_detail(self, request):
+        from django.shortcuts import redirect
+        wiki = Wiki.objects.get(wiki_id=request.GET['wiki_id'])  # board_id로 Board정보 가져오기
+        context = {'wiki': wiki}
+        return render(request, 'wiki/detail_wiki.html', context)
+
+
     # ================================================================
 
     @request_mapping("/", method="get")
@@ -137,6 +146,26 @@ class MyView(View):
                 context={'message':'검색어는 2글자 이상 입력해주세요.'}
                 # messages.error(self.request, '검색어는 2글자 이상 입력해주세요.')
         return render(request,'search_board.html', context);
+
+    @request_mapping("/wiki/search", method="get")
+    def wikisearch(self, request):
+        context = [];
+        search_word = request.GET['q']
+        wiki_list = Wiki.objects.select_related('revi');
+
+
+        if search_word:
+            if len(search_word) > 1:
+                search_wiki_list =wiki_list.filter(wiki_title__icontains=search_word)
+
+                context = {
+                    'search_wikis': search_wiki_list,
+                    'search_term': search_word
+                }
+            else:
+                context = {'message': '검색어는 2글자 이상 입력해주세요.'}
+                # messages.error(self.request, '검색어는 2글자 이상 입력해주세요.')
+        return render(request, 'search_wiki.html', context);
 
 
     # ================================================================

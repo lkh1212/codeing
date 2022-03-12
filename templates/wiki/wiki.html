@@ -4,6 +4,7 @@
     font-weight:bold;
     color:white;
     }
+    style="width:40%;height:40px; text-align:center;"
 </style>
 {% extends 'base.html' %}
 {% block content %}
@@ -11,9 +12,18 @@
             <nav>
                 <div style="padding:200px 0px;">
                     <h1 style="text-align:center; color:blue; font-weight:bold">CODEINGWIKI</h1>
-                    <form style="text-align:center;">
-                    <input id="input" type="search" autocomplete="off" placeholder="검색할 항목을 입력해주세요" style="width:40%;height:40px; text-align:center;">
-                    <button type="submit" style="height:40px; text-align:center;">검색</button>
+                    <form action="/wiki/search" style="text-align:center;" method="GET">
+                        <div class="row">
+                            <div>
+                                <div>
+                                    <div style="margin-top: 10px;">
+                                        <input style="width:40%;height:40px; text-align:center;" type="text" name="q" value="{{ q }}"
+                                             placeholder="검색어를 입력해주세요.">
+                                         <button style="height:40px; text-align:center;" type="submit">검색</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
                     </form>
                 </div>
             </nav>
