@@ -1,0 +1,79 @@
+<!-- 2220312 코드 추가 게시물 상세보기 페이지 추가 -->
+<style>
+
+</style>
+{% extends 'base.html' %}
+{% block content %}
+
+        <div class="container">
+            <form method="post">
+                {% csrf_token %}
+                <div class="form-group row">
+                    <label for="inputTitle" class="col-sm-2 col-form-label"><strong>제목</strong></label>
+                    <div class="col-sm-10">
+                        <input type="text" name="title" class="form-control" id="inputTitle" value="{{ board.board_title }}" autofocus readonly>
+                    </div>
+                </div>
+<!--                <div class="form-group row">-->
+<!--                    <label for="inputContent" class="col-sm-2 col-form-label"><strong>게시판</strong></label>-->
+<!--                    <div class="col-sm-10">-->
+<!--                        <div class="form-control">자유게시판</div>-->
+<!--                    </div>-->
+<!--                </div>-->
+                <div class="form-group row">
+                    <label for="inputTitle" class="col-sm-2 col-form-label"><strong>주제</strong></label>
+                    <div class="col-sm-10">
+                        <input type="text" name="wiki" class="form-control" id="wiki" value="{{ board.board }}"  readonly>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="inputTitle" class="col-sm-2 col-form-label"><strong>인원</strong></label>
+                    <div class="col-sm-10">
+                        <input type="text" name="num" class="form-control" id="board_num" value="{{ board.board_num }}"  readonly>
+                    </div>
+                </div>
+                 <div class="form-group row">
+                    <label for="inputTitle" class="col-sm-2 col-form-label"><strong>장소</strong></label>
+                    <div class="col-sm-10">
+                        <input type="text" name="place" class="form-control" value="{{ board.board_place }}"  readonly>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="inputTitle" class="col-sm-2 col-form-label"><strong>모집기한</strong></label>
+                    <div class="col-sm-10">
+                        <input type="text" name="recruitdate" class="form-control" value="{{ board.board_recruitdate | date:'Y-m-d H:i' }}"  readonly>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="inputTitle" class="col-sm-2 col-form-label"><strong>모임시간</strong></label>
+                    <div class="col-sm-10">
+                        <input type="text" name="time" class="form-control" value="{{ board.board_time | date:'Y-m-d H:i' }}"  readonly>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="inputTitle" class="col-sm-2 col-form-label"><strong>온/오프라인</strong></label>
+                    <div class="col-sm-10">
+                        <input type="text" name="on_off" class="form-control" value="{{ board.board_on_off }}"  readonly>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="inputTitle" class="col-sm-2 col-form-label"><strong>연락처</strong></label>
+                    <div class="col-sm-10">
+                        <input type="text" name="phone" class="form-control" value="{{ board.board_phone }}"  readonly>
+                    </div>
+                </div>
+                <div class="form-group row">
+                    <label for="inputContent" class="col-sm-2 col-form-label"><strong>내용</strong></label>
+                    <div class="col-sm-10">
+                        <input type="text" name="content" class="form-control" id="inputContent" value="{{ board.board_content }}"  readonly>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="col-auto mr-auto"></div>
+                    <div class="col-auto">
+                        <input class="btn btn-primary" type="button" role="button" onclick="location.href='/scrap/scrap/'" value="목록으로">
+                    </div>
+                </div>
+            </form>
+        </div>
+{% endblock %}

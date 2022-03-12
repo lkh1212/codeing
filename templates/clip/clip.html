@@ -1,7 +1,7 @@
 <!-- 2220312 코드 추가 스크랩 리스트페이지 추가 -->
 
 <style>
-#codeing_notice_nav{
+#codeing_card_nav{
     background:blue;
     font-weight:bold;
     color:white;
@@ -14,7 +14,7 @@
                 <div class="container">
                 <table class="table">
                         <thead class="thead-light">
-                        <tr class="thead"> <th>번호</th><th>제목</th><th>글쓴이</th><th>날짜</th></tr>
+                        <tr class="thead"> <th>번호</th><th>제목</th><th>게시판</th><th>글쓴이</th><th>날짜</th></tr>
                         </thead>
                         <tbody>
 
@@ -25,6 +25,9 @@
                             </td>
                             <td>
                                 <a href="/clip/detail?board_id={{ o.board_id }}" >{{o.board_title}}</a>
+                            </td>
+                            <td>
+                                {{o.board}}
                             </td>
                             <td>
                                 {{o.user_id}}

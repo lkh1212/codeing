@@ -4,9 +4,9 @@
 </style>
 {% extends 'base.html' %}
 {% block content %}
-{% if board.board_place %}
-     <input type="text" name="board_place" class="form-control" id="board_place" value="{{ board.board_place }}" autofocus readonly>
-{% endif %}
+<!--{% if board.board_place %}-->
+<!--     <input type="text" name="board_place" class="form-control" id="board_place" value="{{ board.board_place }}" autofocus readonly>-->
+<!--{% endif %}-->
         <div class="container">
             <form method="post">
                 {% csrf_token %}
