@@ -3,7 +3,7 @@ from django.db.models import Q
 from django.shortcuts import render
 from django.views import View
 from django_request_mapping import request_mapping
-from board.models import Board, User, Wiki
+from board.models import Board, User, Wiki, Comment
 from django.utils import timezone
 
 @request_mapping("")
@@ -90,6 +90,86 @@ class MyView(View):
             context = {'board': board}
 
             return render(request, 'clip/detail_study_project.html', context)
+        else:
+            return redirect('/login')
+
+    @request_mapping("/clip/comment", method="post")
+    def comment_add(self, request):
+        from django.shortcuts import redirect
+        if 'sessionid' in request.session:
+            board = Board.objects.get(board_id=request.POST['board_id'])  # board_id로 Board정보 가져오기
+            user = User.objects.get(user_id=request.session['sessionid'])
+            comments = Comment.objects.filter(board=board.board_id)
+
+            comment = Comment();
+            comment.user = user
+            comment.comment_date = timezone.now()
+            comment.board = board
+            comment.comment_content = request.POST['content']
+            comment.save()
+
+            context = {'board': board,
+                       'comment': comment,
+                       'comments': comments}
+
+            return render(request, 'clip/detail.html', context)
+        else:
+            return redirect('/login')
+
+    @request_mapping("/clip/comment/uv/<int:b_id>/<int:c_id>/", method="get")
+    def comment_updateView(self, request, b_id, c_id):
+        from django.shortcuts import redirect
+        if 'sessionid' in request.session:
+            board = Board.objects.get(board_id=b_id)  # board_id로 Board정보 가져오기
+            user = User.objects.get(user_id=request.session['sessionid'])
+            comments = Comment.objects.filter(board=board.board_id)
+            comment = Comment.objects.get(comment_id=c_id);
+
+            context = {'board': board,
+                       'comment': comment,
+                       'comments': comments}
+
+            return render(request, 'clip/comment_update.html', context)
+        else:
+            return redirect('/login')
+
+    @request_mapping("/clip/comment/u/<int:b_id>/<int:c_id>/", method="post")
+    def comment_update(self, request, b_id, c_id):
+        from django.shortcuts import redirect
+        if 'sessionid' in request.session:
+            board = Board.objects.get(board_id=b_id)  # board_id로 Board정보 가져오기
+            user = User.objects.get(user_id=request.session['sessionid'])
+            comments = Comment.objects.filter(board=board.board_id)
+
+            comment = Comment.objects.get(comment_id=c_id);
+            comment.comment_date = timezone.now()
+            comment.comment_content = request.POST['content']
+            comment.save()
+
+            context = {'board': board,
+                       'comment': comment,
+                       'comments': comments}
+
+            return render(request, 'clip/detail.html', context)
+        else:
+            return redirect('/login')
+
+    @request_mapping("/clip/comment/d/<int:b_id>/<int:c_id>/", method="get")
+    def comment_delete(self, request, b_id, c_id):
+        from django.shortcuts import redirect
+        if 'sessionid' in request.session:
+            board = Board.objects.get(board_id=b_id)  # board_id로 Board정보 가져오기
+            user = User.objects.get(user_id=request.session['sessionid'])
+            comments = Comment.objects.filter(board=board.board_id)
+
+            comment = Comment.objects.get(comment_id=c_id);
+            comment.delete();
+
+            context = {'board': board,
+                       'comment': comment,
+                       'comments': comments}
+
+            return render(request, 'clip/detail.html', context)
         else:
             return redirect('/login')
 
