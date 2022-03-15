@@ -1,0 +1,42 @@
+<!-- 2220312 코드 추가 게시물 상세보기 페이지 추가 -->
+<style>
+
+</style>
+{% extends 'base.html' %}
+{% block content %}
+<!--{% if board.board_place %}-->
+<!--     <input type="text" name="board_place" class="form-control" id="board_place" value="{{ board.board_place }}" autofocus readonly>-->
+<!--{% endif %}-->
+        <div class="container">
+                {% csrf_token %}
+
+                  <!--생략-->
+                  댓글 <br>
+                  {% for comment in comments %}
+                  {{comment.comment_content}} - {{comment.user.user_id}} - {{comment.comment_date}}
+                    {% if request.session.sessionid == comment.user.user_id %}
+
+                    {% endif %}
+                  <br>
+                  {% endfor %}
+
+                  <br><br>
+                  댓글 수정 :
+                  <form action="/clip/comment/u/{{board.board_id}}/{{comment.comment_id}}/"  method="post">
+                    {% csrf_token %}
+                    <input name="content" type="text" value="{{comment.comment_content}}">
+                      <input type="hidden" name="board_id" value="{{board.board_id}}">
+                    <input class="btn btn-primary" type="submit" value="저장">
+                  </form>
+
+                </div>
+
+                <div class="row">
+                    <div class="col-auto mr-auto"></div>
+                    <div class="col-auto">
+                        <input class="btn btn-primary" type="button" role="button" onclick="location.href='/scrap/scrap/'" value="목록으로">
+                    </div>
+                </div>
+
+        </div>
+{% endblock %}

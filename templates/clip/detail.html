@@ -1,6 +1,8 @@
 <!-- 2220312 코드 추가 게시물 상세보기 페이지 추가 -->
 <style>
-
+#comment_box{
+    float:right;
+}
 </style>
 {% extends 'base.html' %}
 {% block content %}
@@ -34,12 +36,42 @@
                         <input type="text" name="content" class="form-control" id="inputContent" value="{{ board.board_content }}"  readonly>
                     </div>
                 </div>
+                </form>
+                <div class="container" id="ff">
+                  <!--생략-->
+                  댓글 <br>
+                  {% for comment in comments %}
+                    <div class="comment">
+                        {{comment.comment_content}} - {{comment.user.user_id}} <br>
+                        <div id="comment_box">
+                          - {{comment.comment_date}}
+                         {% if request.session.sessionid == comment.user.user_id %}
+                        <a href="/clip/comment/uv/{{board.board_id}}/{{comment.comment_id}}">수정</a>  <a href="/clip/comment/d/{{board.board_id}}/{{comment.comment_id}}">삭제</a>
+                    {% endif %}
+                        </div>
+                    </div>
+
+
+                  <br>
+                  {% endfor %}
+
+                  <br><br>
+                  댓글 달기 :
+                  <form action="/clip/comment"  method="post">
+                    {% csrf_token %}
+                    <input name="content" type="text" value="">
+                      <input type="hidden" name="board_id" value="{{board.board_id}}">
+                    <input class="btn btn-primary" type="submit" value="작성">
+                  </form>
+
+                </div>
+
                 <div class="row">
                     <div class="col-auto mr-auto"></div>
                     <div class="col-auto">
                         <input class="btn btn-primary" type="button" role="button" onclick="location.href='/scrap/scrap/'" value="목록으로">
                     </div>
                 </div>
-            </form>
+
         </div>
 {% endblock %}

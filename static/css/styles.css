@@ -11338,3 +11338,8 @@ body.sb-sidenav-toggled #wrapper #sidebar-wrapper {
       font-size: 0.875rem;
       border-radius: 0.2rem;
 }
+
+.comment {
+    border-top:dotted 1px #ddd;
+    font-size:0.7em;
+}
